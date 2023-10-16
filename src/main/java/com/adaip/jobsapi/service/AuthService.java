@@ -3,15 +3,18 @@ package com.adaip.jobsapi.service;
 import com.adaip.jobsapi.exception.UniqueFieldException;
 import com.adaip.jobsapi.model.User;
 import com.adaip.jobsapi.repository.UserRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public AuthService(UserRepository userRepository) {
+    public AuthService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public User addUser(User user) {
@@ -21,6 +24,7 @@ public class AuthService {
         if(isEmailRegistered(user.getEmail())) {
             throw new UniqueFieldException("email", "Email is already registered.");
         }
+        user.setPassword(hashPassword(user.getPassword()));
         userRepository.save(user);
         return user;
     }
@@ -33,5 +37,9 @@ public class AuthService {
     public Boolean isUsernameRegistered(String username) {
         User user = userRepository.findByUsername(username);
         return user != null;
+    }
+
+    public String hashPassword(String password) {
+        return passwordEncoder.encode(password);
     }
 }
