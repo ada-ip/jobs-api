@@ -5,19 +5,19 @@ import com.adaip.jobsapi.exception.UniqueFieldException;
 import com.adaip.jobsapi.model.User;
 import com.adaip.jobsapi.repository.UserRepository;
 import com.adaip.jobsapi.util.JWTUtil;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import com.adaip.jobsapi.util.PasswordEncoderUtil;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
 
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final PasswordEncoderUtil passwordEncoderUtil;
     private final JWTUtil jwtUtil;
 
-    public AuthService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, JWTUtil jwtUtil) {
+    public AuthService(UserRepository userRepository, PasswordEncoderUtil passwordEncoderUtil, JWTUtil jwtUtil) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
+        this.passwordEncoderUtil = passwordEncoderUtil;
         this.jwtUtil = jwtUtil;
     }
 
@@ -28,7 +28,7 @@ public class AuthService {
         if(isEmailRegistered(user.getEmail())) {
             throw new UniqueFieldException("email", "Email is already registered.");
         }
-        user.setPassword(hashPassword(user.getPassword()));
+        user.setPassword(passwordEncoderUtil.hashPassword(user.getPassword()));
         userRepository.save(user);
         return user.getId();
     }
@@ -58,14 +58,6 @@ public class AuthService {
         if(user == null) {
             return false;
         }
-        return comparePassword(userLoginRequest.getPassword(), user.getPassword());
-    }
-
-    public String hashPassword(String password) {
-        return passwordEncoder.encode(password);
-    }
-
-    public Boolean comparePassword(String password, String hashedPassword) {
-        return passwordEncoder.matches(password, hashedPassword);
+        return passwordEncoderUtil.comparePassword(userLoginRequest.getPassword(), user.getPassword());
     }
 }

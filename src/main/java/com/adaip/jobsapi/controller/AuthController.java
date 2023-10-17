@@ -3,7 +3,6 @@ package com.adaip.jobsapi.controller;
 import com.adaip.jobsapi.dto.UserLoginRequestDTO;
 import com.adaip.jobsapi.model.User;
 import com.adaip.jobsapi.service.AuthService;
-import com.adaip.jobsapi.util.JWTUtil;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/auth")
 public class AuthController {
 
-    private AuthService authService;
+    private final AuthService authService;
 
     public AuthController(AuthService authService) {
         this.authService = authService;
