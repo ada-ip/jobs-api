@@ -1,7 +1,7 @@
 package com.adaip.jobsapi.service;
 
 import com.adaip.jobsapi.dto.UserLoginRequestDTO;
-import com.adaip.jobsapi.exception.UniqueFieldException;
+import com.adaip.jobsapi.exception.DBFieldException;
 import com.adaip.jobsapi.model.User;
 import com.adaip.jobsapi.repository.UserRepository;
 import com.adaip.jobsapi.util.JWTUtil;
@@ -23,10 +23,10 @@ public class AuthService {
 
     public Long addUser(User user) {
         if(isUsernameRegistered(user.getUsername())) {
-            throw new UniqueFieldException("username", "Username is already registered.");
+            throw new DBFieldException("username", "Username is already registered.");
         }
         if(isEmailRegistered(user.getEmail())) {
-            throw new UniqueFieldException("email", "Email is already registered.");
+            throw new DBFieldException("email", "Email is already registered.");
         }
         user.setPassword(passwordEncoderUtil.hashPassword(user.getPassword()));
         userRepository.save(user);
@@ -56,8 +56,11 @@ public class AuthService {
     public Boolean isUserValid(UserLoginRequestDTO userLoginRequest){
         User user = userRepository.findByUsername(userLoginRequest.getUsername());
         if(user == null) {
-            return false;
+            throw new DBFieldException("username", "Username is not registered.");
         }
-        return passwordEncoderUtil.comparePassword(userLoginRequest.getPassword(), user.getPassword());
+        if(!passwordEncoderUtil.comparePasswords(userLoginRequest.getPassword(), user.getPassword())) {
+            throw new DBFieldException("password", "Wrong password.");
+        }
+        return true;
     }
 }

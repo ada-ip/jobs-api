@@ -27,9 +27,9 @@ public class GlobalExceptionHandler {
         return errors;
     }
 
-    @ExceptionHandler(UniqueFieldException.class)
+    @ExceptionHandler(DBFieldException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String,String> handleUniqueFieldError(UniqueFieldException ex) {
+    public Map<String,String> handleDBFieldError(DBFieldException ex) {
         Map<String, String> error = new HashMap<>();
         error.put(ex.getField(), ex.getMessage());
         return error;

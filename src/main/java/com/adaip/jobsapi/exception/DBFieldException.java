@@ -1,10 +1,10 @@
 package com.adaip.jobsapi.exception;
 
-public class UniqueFieldException extends RuntimeException {
+public class DBFieldException extends RuntimeException {
     private final String field;
     private final String message;
 
-    public UniqueFieldException(String field, String message) {
+    public DBFieldException(String field, String message) {
         this.field = field;
         this.message = message;
     }

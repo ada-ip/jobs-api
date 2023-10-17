@@ -25,7 +25,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody UserLoginRequestDTO userLoginRequest) {
+    public String login(@Valid @RequestBody UserLoginRequestDTO userLoginRequest) {
         String token = authService.authenticateUser(userLoginRequest);
         return token;
     }

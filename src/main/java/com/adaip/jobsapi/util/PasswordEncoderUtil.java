@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class PasswordEncoderUtil {
 
-    private BCryptPasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     public PasswordEncoderUtil(BCryptPasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
@@ -16,7 +16,7 @@ public class PasswordEncoderUtil {
         return passwordEncoder.encode(password);
     }
 
-    public Boolean comparePassword(String password, String hashedPassword) {
+    public Boolean comparePasswords(String password, String hashedPassword) {
         return passwordEncoder.matches(password, hashedPassword);
     }
 }
